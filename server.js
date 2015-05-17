@@ -17,8 +17,12 @@ var startServer = function() {
 
     io.on('connection', function(socket) {
         console.log('Client connected');
-        socket.on('event', function(event) {
-            socket.emit('event', event);
+        socket.on('down', function(event) {
+            socket.emit('down', event);
+        });
+
+        socket.on('up', function(event) {
+            socket.emit('up', event);
         });
     });
 
