@@ -11,7 +11,7 @@ app.get('/', function(req, res){
 var startServer = function() {
     var server = http.createServer(app);
     var io = socket(server);
-    server.listen(8080, function() {
+    server.listen(80, function() {
         console.log("Server Started");
     });
 
