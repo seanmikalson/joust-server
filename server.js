@@ -11,7 +11,7 @@ app.get('/', function(req, res){
 var startServer = function() {
     var server = http.createServer(app);
     var io = socket(server);
-    server.listen(80, function() {
+    server.listen(process.env.PORT || 80, function() {
         console.log("Server Started");
     });
 
