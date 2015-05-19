@@ -1,6 +1,9 @@
 var express = require('express');
 var http = require('http');
 var socket = require('socket.io');
+var util = require('./util');
+var Map = require('./map').Map;
+var gamemap = new Map();
 
 var app = express();
 
@@ -17,17 +20,34 @@ var startServer = function() {
 
     io.on('connection', function(socket) {
         console.log('Client connected');
-        socket.on('down', function(event) {
-            socket.emit('down', event);
+        console.log(JSON.stringify(gamemap));
+
+        socket.on('display', function(event) {
+            var gameId;
+            do {
+                gameId = util.generateGameId();
+            } while(gamemap.isGameInUse(gameId));
+
+            gamemap.add(socket.id, gameId);
+
+            socket.on('down-' + gameId, function(event) {
+                socket.emit('down-'+gameId, event);
+            });
+
+            socket.on('up-'+gameId, function(event) {
+                socket.emit('up-'+gameId, event);
+            });
+
+            socket.emit('display', {gameid:gameId});
+
         });
 
-        socket.on('up', function(event) {
-            socket.emit('up', event);
-        });
+
     });
 
-    io.on('disconnect', function() {
-        console.log('Client disconnected');
+    io.on('disconnect', function(socket) {
+        gamemap.remove(socket.id);
+        console.log(JSON.stringify(gamemap));
     });
 };
 
