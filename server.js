@@ -29,25 +29,25 @@ var startServer = function() {
             } while(gamemap.isGameInUse(gameId));
 
             gamemap.add(socket.id, gameId);
-
-            socket.on('down-' + gameId, function(event) {
-                socket.emit('down-'+gameId, event);
-            });
-
-            socket.on('up-'+gameId, function(event) {
-                socket.emit('up-'+gameId, event);
-            });
-
             socket.emit('display', {gameid:gameId});
 
         });
 
+        socket.on('control', function(data) {
+            var gameId = data;
+            socket.on('down-' + gameId, function(event) {
+                io.emit('down-'+gameId, event);
+            });
+
+            socket.on('up-'+gameId, function(event) {
+                io.emit('up-'+gameId, event);
+            });
+        });
 
     });
 
     io.on('disconnect', function(socket) {
         gamemap.remove(socket.id);
-        console.log(JSON.stringify(gamemap));
     });
 };
 
