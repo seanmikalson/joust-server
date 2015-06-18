@@ -34,13 +34,19 @@ var startServer = function() {
         });
 
         socket.on('control', function(data) {
-            var gameId = data;
-            socket.on('down-' + gameId, function(event) {
-                io.emit('down-'+gameId, event);
+
+            // Pass on character data so that display can create a character and display
+            console.log('control'+JSON.stringify(data));
+            io.emit('control'+data.gameid, data);
+
+            var gameId = data.gameid;
+            var character = data.character;
+            socket.on('down-' + gameId, function(data) {
+                io.emit('down-'+gameId, data);
             });
 
-            socket.on('up-'+gameId, function(event) {
-                io.emit('up-'+gameId, event);
+            socket.on('up-'+gameId, function(data) {
+                io.emit('up-'+gameId, data);
             });
         });
 
